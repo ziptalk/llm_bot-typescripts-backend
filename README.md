@@ -30,9 +30,18 @@
 - npm (v6 이상)
 - Hugging Face API 키 (`HUGGING_FACE_API_KEY` 환경 변수에 설정해야 합니다)
 
+- 리포지토리 클론
+먼저 터미널이나 명령 프롬프트를 열고, 원하는 디렉토리에서 다음 명령을 실행하세요:
+
+```
+bash
+git clone https://github.com/ziptalk/llm_bot-typescripts-backend.git
+```
+
 ### 1. 종속성 설치
 
-```bash
+```
+bash
 # Node.js 종속성 설치
 npm install
 ```
