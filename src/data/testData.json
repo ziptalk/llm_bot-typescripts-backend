@@ -1,0 +1,7 @@
+
+[
+    { "source_medium": "Google", "visitor_count": 1200, "user_id": "user1" },
+    { "source_medium": "Facebook", "visitor_count": 900, "user_id": "user2" },
+    { "source_medium": "Email", "visitor_count": 750, "user_id": "user3" }
+  ]
+  

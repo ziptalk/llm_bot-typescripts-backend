@@ -1,0 +1,19 @@
+{
+  "name": "nuguna-chat",
+  "version": "1.0.0",
+  "description": "---",
+  "main": "jest.config.js",
+  "scripts": {
+    "build": "tsc && npm run copy-json",
+    "postbuild": "node copyJson.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-json": "copyfiles -u 1 src/data/testData.json dist/data"
+
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  }
+}

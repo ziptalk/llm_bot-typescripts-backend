@@ -1,0 +1,42 @@
+# .github/workflows/deploy.yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          pip install torch transformers
+
+      - name: TypeScript Compile
+        run: npx tsc
+
+      - name: Run tests
+        run: npx jest
+
+      - name: Deploy to AWS SAM
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          sam build
+          sam deploy --config-env prod --no-confirm-changeset --no-fail-on-empty-changeset
