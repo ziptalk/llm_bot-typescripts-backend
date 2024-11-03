@@ -24,7 +24,7 @@ const isLocal = process.env.NODE_ENV === 'local';
  * @throws 에러 메시지와 함께 key가 없을 시 로그를 생성하고 종료
  */
 const validateApiKey = () => {
-    if (!HUGGING_FACE_API_KEY) {
+    if (!HUGGING_FACE_API_KEY && !isLocal) {
         const errorMessage = 'API Key is missing. Please set HUGGING_FACE_API_KEY.';
         logger_1.logger.error(errorMessage);
         throw new Error(errorMessage);
@@ -140,6 +140,11 @@ const callTranslationModel = async (endpoint, text) => {
 const generateSQLQuery = async (question) => {
     validateApiKey();
     logger_1.logger.info(`Original question: "${question}"`);
+    if (isLocal && !HUGGING_FACE_API_KEY) {
+        // 로컬 환경이면서 API Key가 없을 때, 기본 SQL 쿼리 반환
+        logger_1.logger.warn('Local environment without API Key detected. Using default SQL query.');
+        return generateDefaultSQLQuery(question);
+    }
     let attempt = 0;
     while (attempt < MAX_RETRIES) {
         try {

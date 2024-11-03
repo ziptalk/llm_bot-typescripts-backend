@@ -7,7 +7,7 @@
 
 **현재는 API 호출 속도와 용량에 제한이 있으니, 오류 발생 시에는 잠시 기다렸다가 재시도해주시면 호출되는 경우가 많습니다! 실제 봇 환경에서는 보다 용이하게 동작할 거예요.**
 
-**현재는 event.json 파일에서 '질문'을 넣으실 수 있고, 해당 질문에 대해 키워드 방식으로 추출 후 쿼리를 뽑고 있어 이 부분이 미진합니다. 또한, 쿼리 결과 -> 답변 쪽도 덜 구현되어 있습니다.**
+**현재는 event.json 파일에서 '질문'을 넣으실 수 있고, 해당 질문에 대해 키워드 방식으로 추출 후 쿼리를 뽑고 있어 이 부분이 미진합니다. 또한, 쿼리 결과 -> 답변 쪽도 덜 구현되어 있습니다. AWS Lambda 를 본격적으로 사용하고 있지도 않습니다. 이 점 양해 부탁드립니다!**
 
 ---
 
@@ -46,16 +46,18 @@ Hugging Face API 키와 같은 민감한 정보는 `.env` 파일에서 관리됩
 HUGGING_FACE_API_KEY=your_hugging_face_api_key
 ```
 
+- NODE_ENV=local 을 붙이면 로컬 환경에서 테스트 데이터베이스를 사용해 테스트됩니다. 해당 부분은 .env 파일에서 관리가 가능하지만, 직접 코드 실행 시 붙여도 됩니다.
+- Hugging Face API 키가 없을 시, 로컬 환경에서는 기본 쿼리가 반환됩니다.
+
 ### 3. 테스트 데이터베이스 초기화
 로컬 환경에서 SQLite 테스트 데이터베이스를 생성하려면, initTestDb.js 스크립트를 실행하여 초기 데이터를 설정해야 합니다.
 
 ```
 bash
-코드 복사
 node initTestDb.js
 ```
 
-initTestDb.js 스크립트는 test.db라는 SQLite 데이터베이스를 생성하고, 로컬 테스트에 필요한 기본 데이터를 삽입합니다.
+- initTestDb.js 스크립트는 test.db라는 SQLite 데이터베이스를 생성하고, 로컬 테스트에 필요한 기본 데이터를 삽입합니다.
 
 ### 4. 빌드 및 배포
 
@@ -85,10 +87,25 @@ npx tsc
 │   │   │   └── responseFormatter.ts # SQL 결과를 자연어 응답으로 포맷
 │   │   ├── dataSources
 │   │   │   ├── queryExecutor.ts    # 데이터베이스 쿼리 실행
+│   │   │   ├── bigQueryClient.js   # BigQuery 클라이언트 설정 파일
+│   │   │   └── bigQueryMock.ts     # BigQuery 클라이언트 모킹 파일 (테스트 용도)
+│   ├── data                         
+│   │   ├── testData.json           # 로컬 환경용 테스트 JSON 데이터 파일
+│   │   └── initTestDb.ts          # 로컬 테스트용 SQLite 초기화 스크립트
+├── .aws-sam                        # AWS SAM 빌드 및 배포 관련 디렉터리
+│   ├── build                       # SAM CLI로 빌드한 파일 저장
+│   └── stack                       # SAM 스택 관련 파일 저장
 ├── .env                            # 환경 변수 설정 파일
+├── biome.json                      # 코드 스타일 및 포맷팅 관련 설정 파일
+├── copyJson.js                     # testData.json을 빌드 디렉터리로 복사하는 스크립트
 ├── event.json                      # 로컬 테스트를 위한 이벤트 파일
 ├── README.md                       # 프로젝트 설명 파일
-└── tsconfig.json                   # TypeScript 설정 파일
+├── jest.config.js                  # Jest 설정 파일
+├── jest.setup.js                   # Jest 초기화 스크립트
+├── samconfig.toml                  # AWS SAM CLI 구성 파일
+├── template.yaml                   # AWS Lambda 및 리소스 배포를 위한 SAM 템플릿 파일
+├── tsconfig.json                   # TypeScript 설정 파일
+└── package.json                    # npm 스크립트 및 프로젝트 의존성 관리 파일
 
 
 ---
